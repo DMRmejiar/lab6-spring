@@ -17,12 +17,17 @@ before_script:
   - mysql -u root -e "GRANT ALL ON empleado.* TO 'root'@'localhost';"
 before_install:
   - chmod +x mvnw ./mvnw.cmd
+  - wget -qO- https://toolbelt.heroku.com/install.sh | sh
 # - ./mvnw.cmd clean install 
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - echo "$HEROKU_PASSWORD" | docker login -u "$HEROKU_USERNAME" --password-stdin registry.heroku.com
 script:
   - docker build -t dmrmejiar/empleado-sa .
+  - docker tag dmrmejiar/empleado-sa registry.heroku.com/$HEROKU_APP_NAME/web
 deploy:
   provider: script
   script:
     docker push dmrmejiar/empleado-sa;
+    docker push registry.heroku.com/$HEROKU_APP_NAME/web;
+    heroku container:release web --app $HEROKU_APP_NAME
   branch: master
