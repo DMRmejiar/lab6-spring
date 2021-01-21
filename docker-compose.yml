@@ -2,7 +2,7 @@ version: '3.3'
 services:
   db:
     image: mysql:5.7
-    container_name: mysql-standalone
+    container_name: dmrmejiar/mysql-standalone
     environment:
       MYSQL_ROOT_PASSWORD: "sa"
       MYSQL_DATABASE: "empleado"
@@ -13,7 +13,7 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    container_name: empleado
+    container_name: dmrmejiar/empleado
     working_dir: /usr/src/
     ports:
       - "8089:8089" 

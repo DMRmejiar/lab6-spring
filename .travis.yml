@@ -6,8 +6,6 @@ services:
   - docker
 dist: trusty
 sudo: required
-addons:
-apt:
 packages:
   - mysql-server-5.7
   - mysql-client-core-5.7
@@ -18,16 +16,21 @@ before_script:
 before_install:
   - chmod +x mvnw ./mvnw.cmd
   - wget -qO- https://toolbelt.heroku.com/install.sh | sh
-# - ./mvnw.cmd clean install 
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - echo "$HEROKU_PASSWORD" | docker login -u "$HEROKU_USERNAME" --password-stdin registry.heroku.com
 script:
   - docker build -t dmrmejiar/empleado-sa .
+  - docker pull mysql:5.7
   - docker tag dmrmejiar/empleado-sa registry.heroku.com/$HEROKU_APP_NAME/web
+  - docker tag mysql dmrmejiar/mysql-standalone
+  - docker tag dmrmejiar/mysql-standalone registry.heroku.com/$HEROKU_DB_NAME/web
 deploy:
   provider: script
   script:
+    docker push dmrmejiar/mysql-standalone;
+    docker push registry.heroku.com/$HEROKU_DB_NAME/web;
     docker push dmrmejiar/empleado-sa;
     docker push registry.heroku.com/$HEROKU_APP_NAME/web;
+    heroku container:release web --app $HEROKU_DB_NAME;
     heroku container:release web --app $HEROKU_APP_NAME
   branch: master
