@@ -22,7 +22,7 @@ script:
   - docker build -t dmrmejiar/empleado-sa .
   - docker pull mysql:5.7
   - docker tag dmrmejiar/empleado-sa registry.heroku.com/$HEROKU_APP_NAME/web
-  - docker tag mysql dmrmejiar/mysql-standalone
+  - docker tag mysql:5.7 dmrmejiar/mysql-standalone
   - docker tag dmrmejiar/mysql-standalone registry.heroku.com/$HEROKU_DB_NAME/web
 deploy:
   provider: script
